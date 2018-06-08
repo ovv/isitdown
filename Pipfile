@@ -11,6 +11,14 @@ asyncssh = {extras = ["bcrypt"]}
 [dev-packages]
 black = "*"
 tox = "*"
+pytest-runner = "*"
+pytest = "*"
+coverage = "*"
+pytest-coverage = "*"
+pytest-asyncio = "*"
+sphinx = "*"
+sphinxcontrib-asyncio = "*"
+sphinxcontrib-napoleon = "*"
 
 [requires]
 python_version = "3.6"

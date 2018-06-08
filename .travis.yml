@@ -1,15 +1,36 @@
----
 language: python
+matrix:
+  fast_finish: true
+  allow_failures:
+  - python: nightly
+  - python: 3.7-dev
+  - python: 3.6-dev
 python:
-  - 3.6
-
-addons:
-  apt:
-    update: true
-
+- '3.6'
+- 3.6-dev
+- 3.6-dev
+- nightly
 install:
-  - pip install pipenv
-  - pipenv install --deploy && pipenv install --dev --deploy
-
+- pip install pipenv
+- pipenv install --deploy && pipenv install --dev --deploy
 script:
-  - pipenv run black --check --diff .
+- pipenv run black --check --diff .
+- pipenv run python setup.py test
+- pipenv run python setup.py doc
+- pipenv run python setup.py sdist
+- pipenv run python setup.py bdist_wheel
+after_success:
+- coveralls
+deploy:
+  matrix:
+  - provider: pypi
+    distribution: sdist bdist_wheel
+    user: Ovv
+    password:
+      secure: 4tQIH4RFplxjTi5gdbUCV74ogipOWGvLVacylRI8NK6MErjqMd0d+44tvv4IP2AeuWNpzqZ6Ja9sn3OFGMc9gAGn9GO9OiUlR5vTYnNn4SmaP7X+Apa3BLQqYAH+QRzNDCfPceaFHqGr4dsCSs9HsrbsTMhpiC0Mz4P9St17XzakpOnvWt6mM48VEHvl4VkS4R+CJlrO/QKM4LO93umtJvbgYWsa0hTvLucGRoMliZAC1/nOOO8oJiFg4UyVDkBlpx3UHGVZp+8N5esXuGJztGGc+UpJrjli/M3ie5lF9HLAFxeqHt/CoR9/pFHRBUpEOD1mcLJHS6nWzBUAg4M9w4EN3uxw5qvjPd3M+IUqsAXO1cPpZnr1KNn1AIZ+IZHVk50ikwWHx3hjALeuzauNbZh93FwnikfN4z7HNMOCNO4VxdOa7R4ZZxIHEskr6OzzEnTVF2G5knqHhLtDu2n1Xoc+hKmIT+njZ6m0WpBh1Zbzm/lAKwM+XS3qjdqR032DhmxWfwg7+Bej5aXPPL9uso5pX9LO9zK0H5mCZSPBKFuBecukFb753g7RyiK7bUm4goCPCevG4GlesOJUGYo82G6RkAacJBGupMHaxNu3LmxfMqmpSZdB4cCNF4YxmMAinTIE2JfNLyEecDe07O0ZIwZefM9izDwmWtEW2knL200=
+    on:
+      repo: ovv/isitdown
+      branch: master
+      python: '3.6'
+      tags: true
+
