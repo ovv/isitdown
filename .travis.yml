@@ -1,3 +1,5 @@
+---
+
 language: python
 
 matrix:
@@ -28,7 +30,7 @@ script:
 after_success:
   - coveralls
 
-  deploy:
+deploy:
   - provider: pypi
     distribution: sdist bdist_wheel
     user: Ovv
