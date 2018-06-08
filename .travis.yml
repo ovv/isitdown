@@ -9,7 +9,7 @@ addons:
 
 install:
   - pip install pipenv
-  - pipenv install --system --deploy && pipenv install --dev --system -deploy
+  - pipenv install --deploy && pipenv install --dev --deploy
 
 script:
   - pipenv run black --check --diff .

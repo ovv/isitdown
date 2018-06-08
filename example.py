@@ -12,7 +12,7 @@ def main():
             host="foo.bar",
             username="root",
             expected_regex="active \(running\)",
-        )
+        ),
     ]
 
     app = isitdown.isitdown(*checks)
