@@ -1,27 +1,34 @@
 language: python
+
 matrix:
   fast_finish: true
   allow_failures:
-  - python: nightly
-  - python: 3.7-dev
-  - python: 3.6-dev
+    - python: nightly
+    - python: 3.7-dev
+    - python: 3.6-dev
+
 python:
-- '3.6'
-- 3.6-dev
-- 3.7-dev
-- nightly
+  - '3.6'
+  - 3.6-dev
+  - 3.7-dev
+  - nightly
+
 install:
-- pip install pipenv
-- pipenv install --deploy && pipenv install --dev --deploy
+  - pip install pipenv
+  - pip install coveralls
+  - pipenv install --deploy && pipenv install --dev --deploy
+
 script:
-- pipenv run black --check --diff .
-- pipenv run python setup.py test
-- pipenv run python setup.py doc
-- pipenv run python setup.py sdist
-- pipenv run python setup.py bdist_wheel
+  - pipenv run black --check --diff .
+  - pipenv run python setup.py test
+  - pipenv run python setup.py doc
+  - pipenv run python setup.py sdist
+  - pipenv run python setup.py bdist_wheel
+
 after_success:
-- coveralls
-deploy:
+  - coveralls
+
+  deploy:
   - provider: pypi
     distribution: sdist bdist_wheel
     user: Ovv
