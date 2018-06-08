@@ -3,7 +3,7 @@ Is it down ?
 
 Dead simple status monitoring tool.
 
-.. image:: https://readthedocs.org/projects/isitodwn/badge/?version=stable
+.. image:: https://readthedocs.org/projects/isitdown/badge/?version=stable
     :target: http://isitdown.readthedocs.io/en/stable/?badge=stable
     :alt: Documentation Status
 .. image:: https://travis-ci.com/ovv/isitdown.svg?branch=master
