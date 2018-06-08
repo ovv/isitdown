@@ -23,14 +23,13 @@ script:
 after_success:
 - coveralls
 deploy:
-  matrix:
-  - provider: pypi
-    distribution: sdist bdist_wheel
-    user: Ovv
-    password:
-      secure: mi7DtCwo5d/OiEBtYN9Ux9jZ0w0haoqk4MEbGZdWGjfrNQ1IJa5qzsA9P2J/TJoOKKArSIw7Eow4pmotJg3gcBofrJ2NwDB4wN7V+8MOIo/6KSd6NrRQdBmWi1hqr5VVhuyogCBcsOaefb1HjxRwoUgFSt179anNOBkBlhVXwsoakftZ/YDTbB3oosX0K4Aj8nGX+rGTRVC0dGgbHc9UinR4E5mnghmLUQjG39Q3TVRKf6MhvDN9/aWeWaKwV7Fh0usLiw9KtfZ0x/eOF+rKekrjW9XwwWbCM2iiOExp9gaWaY0zoGo1d1e4LZaxnW2+ur7CwHWhQVfp7O030w3RQN00k512JI+m78R0IE75gP7/uUzfWnNl9cGKLkPaauboaT06kJiE2wuQP+v3Uo6LYQ5NfjJ2MRgiXcIgwGMDAFhGgCB3cKBRMSt/mcMeBiRtREsFaXTSe4ip+xOmp4y+gMG/hBT5iM7fFXWmIt4gZNKrlYMg9bolMF60kNzVPBdAmAtXSUO/EGY+zdtBpYH3YDe/jiedIl848s+6/KCGuEjPqpHe4k2RBTuv29pUoiQLe2I8EJ4m+o/sZ8WzWgEku7Fg5pXLi3sWb5x0AKh7qzTwWvywiYZ5oe/Bli4bgERiHtASK4PqRB8bZUidrU2/6ZOscBbfkzKUiElFp91oRCw=
-    on:
-      repo: ovv/isitdown
-      branch: master
-      python: '3.6'
-      tags: true
+  provider: pypi
+  distribution: sdist bdist_wheel
+  user: Ovv
+  password:
+    secure: mi7DtCwo5d/OiEBtYN9Ux9jZ0w0haoqk4MEbGZdWGjfrNQ1IJa5qzsA9P2J/TJoOKKArSIw7Eow4pmotJg3gcBofrJ2NwDB4wN7V+8MOIo/6KSd6NrRQdBmWi1hqr5VVhuyogCBcsOaefb1HjxRwoUgFSt179anNOBkBlhVXwsoakftZ/YDTbB3oosX0K4Aj8nGX+rGTRVC0dGgbHc9UinR4E5mnghmLUQjG39Q3TVRKf6MhvDN9/aWeWaKwV7Fh0usLiw9KtfZ0x/eOF+rKekrjW9XwwWbCM2iiOExp9gaWaY0zoGo1d1e4LZaxnW2+ur7CwHWhQVfp7O030w3RQN00k512JI+m78R0IE75gP7/uUzfWnNl9cGKLkPaauboaT06kJiE2wuQP+v3Uo6LYQ5NfjJ2MRgiXcIgwGMDAFhGgCB3cKBRMSt/mcMeBiRtREsFaXTSe4ip+xOmp4y+gMG/hBT5iM7fFXWmIt4gZNKrlYMg9bolMF60kNzVPBdAmAtXSUO/EGY+zdtBpYH3YDe/jiedIl848s+6/KCGuEjPqpHe4k2RBTuv29pUoiQLe2I8EJ4m+o/sZ8WzWgEku7Fg5pXLi3sWb5x0AKh7qzTwWvywiYZ5oe/Bli4bgERiHtASK4PqRB8bZUidrU2/6ZOscBbfkzKUiElFp91oRCw=
+  on:
+    repo: ovv/isitdown
+    branch: master
+    python: '3.6'
+    tags: true
