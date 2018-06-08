@@ -34,7 +34,7 @@ setuptools.setup(
     long_description=LONG_DESCRIPTION,
     description="Dead simple status monitoring tool",
     keywords=[],
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(exclude=('tests', )),
     zip_safe=True,
     install_requires=requires["install"],
     setup_requires=requires["setup"],

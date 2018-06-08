@@ -22,7 +22,6 @@ script:
 after_success:
 - coveralls
 deploy:
-  matrix:
   - provider: pypi
     distribution: sdist bdist_wheel
     user: Ovv
@@ -33,4 +32,3 @@ deploy:
       branch: master
       python: '3.6'
       tags: true
-
