@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "5a976975b0b81b64ceacdb748625b05ab38e47803491ea24cd9b48a94f1e9eca"
+            "sha256": "dfab36d7d7ac8ec96f8367cc6a6b80651ad443a2740a982259f4e668fbe4cc96"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -36,6 +36,14 @@
             ],
             "index": "pypi",
             "version": "==3.3.1"
+        },
+        "aiosmtplib": {
+            "hashes": [
+                "sha256:5ed0a0896aead9e99281ca61d3fc1114f8ad5874114f3814f68869d2c348521d",
+                "sha256:c9d77f9f7a7d6fdb8db29b412fa3971a13c01be1042f47a0e0a28522c9a494ff"
+            ],
+            "index": "pypi",
+            "version": "==1.0.2"
         },
         "asn1crypto": {
             "hashes": [
@@ -131,6 +139,7 @@
                 "sha256:edabd457cd23a02965166026fd9bfd196f4324fe6032e866d0f3bd0301cd486f",
                 "sha256:fdf1c1dc5bafc32bc5d08b054f94d659422b05aba244d6be4ddc1c72d9aa70fb"
             ],
+            "markers": "platform_python_implementation != 'pypy'",
             "version": "==1.11.5"
         },
         "chardet": {

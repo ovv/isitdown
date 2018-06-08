@@ -24,11 +24,11 @@ class BaseSSHCommandCheck(BaseChecks):
             ssh_kwargs = dict()
 
         ssh_kwargs["host"] = host
-        if port:
+        if port is not None:
             ssh_kwargs["port"] = port
-        if username:
+        if username is not None:
             ssh_kwargs["username"] = username
-        if password:
+        if password is not None:
             ssh_kwargs["password"] = password
 
         if "name" not in kwargs:

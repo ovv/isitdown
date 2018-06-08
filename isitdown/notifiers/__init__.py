@@ -1,7 +1,9 @@
 import attr
 import logging
+import aiosmtplib
 
 from enum import Enum
+from email.mime.text import MIMEText
 
 LOG = logging.getLogger(__name__)
 
@@ -68,4 +70,64 @@ class LoggingNotifier(BaseNotifier):
 
 
 class SMTPNotifier(BaseNotifier):
-    pass
+    def __init__(
+        self,
+        *,
+        hostname,
+        sender,
+        recipients,
+        username=None,
+        password=None,
+        port=None,
+        use_tls=None,
+        smtp_kwargs=None,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+
+        if not smtp_kwargs:
+            smtp_kwargs = dict()
+
+        smtp_kwargs["hostname"] = hostname
+        if port is not None:
+            smtp_kwargs["port"] = port
+        if use_tls is not None:
+            smtp_kwargs["use_tls"] = use_tls
+
+        if not isinstance(recipients, (list, tuple)):
+            recipients = (recipients,)
+
+        self.sender = sender
+        self.username = username
+        self.password = password
+        self.recipients = recipients
+        self.smtp_kwargs = smtp_kwargs
+
+    async def _send_email(self, subject, payload):
+
+        client = aiosmtplib.SMTP(**self.smtp_kwargs)
+        await client.connect()
+
+        if self.username and self.password:
+            await client.login(username=self.username, password=self.password)
+
+        message = MIMEText(payload)
+        message["To"] = ", ".join(self.recipients)
+        message["From"] = self.sender
+        message["Subject"] = subject
+        await client.send_message(message)
+
+    async def _error(self, result):
+        await self._send_email(
+            subject=f"Check {result.check} FAILED ({result.reason}) !",
+            payload=str(result.data),
+        )
+
+    async def _recover(self, result):
+        await self._send_email(subject=f"Check {result.check} RECOVERED !")
+
+    async def ok(self, result):
+        pass
+
+    async def _silenced_error(self, result):
+        pass
