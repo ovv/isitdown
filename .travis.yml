@@ -1,41 +1,34 @@
----
-
 language: python
-
 matrix:
   fast_finish: true
   allow_failures:
-    - python: nightly
-    - python: 3.7-dev
-    - python: 3.6-dev
-
+  - python: nightly
+  - python: 3.7-dev
+  - python: 3.6-dev
 python:
-  - '3.6'
-  - 3.6-dev
-  - 3.7-dev
-  - nightly
-
+- '3.6'
+- 3.6-dev
+- 3.7-dev
+- nightly
 install:
-  - pip install pipenv
-  - pip install coveralls
-  - pipenv install --deploy && pipenv install --dev --deploy
-
+- pip install pipenv
+- pip install coveralls
+- pipenv install --deploy && pipenv install --dev --deploy
 script:
-  - pipenv run black --check --diff .
-  - pipenv run python setup.py test
-  - pipenv run python setup.py doc
-  - pipenv run python setup.py sdist
-  - pipenv run python setup.py bdist_wheel
-
+- pipenv run black --check --diff .
+- pipenv run python setup.py test
+- pipenv run python setup.py doc
+- pipenv run python setup.py sdist
+- pipenv run python setup.py bdist_wheel
 after_success:
-  - coveralls
-
+- coveralls
 deploy:
+  matrix:
   - provider: pypi
     distribution: sdist bdist_wheel
     user: Ovv
     password:
-      secure: 4tQIH4RFplxjTi5gdbUCV74ogipOWGvLVacylRI8NK6MErjqMd0d+44tvv4IP2AeuWNpzqZ6Ja9sn3OFGMc9gAGn9GO9OiUlR5vTYnNn4SmaP7X+Apa3BLQqYAH+QRzNDCfPceaFHqGr4dsCSs9HsrbsTMhpiC0Mz4P9St17XzakpOnvWt6mM48VEHvl4VkS4R+CJlrO/QKM4LO93umtJvbgYWsa0hTvLucGRoMliZAC1/nOOO8oJiFg4UyVDkBlpx3UHGVZp+8N5esXuGJztGGc+UpJrjli/M3ie5lF9HLAFxeqHt/CoR9/pFHRBUpEOD1mcLJHS6nWzBUAg4M9w4EN3uxw5qvjPd3M+IUqsAXO1cPpZnr1KNn1AIZ+IZHVk50ikwWHx3hjALeuzauNbZh93FwnikfN4z7HNMOCNO4VxdOa7R4ZZxIHEskr6OzzEnTVF2G5knqHhLtDu2n1Xoc+hKmIT+njZ6m0WpBh1Zbzm/lAKwM+XS3qjdqR032DhmxWfwg7+Bej5aXPPL9uso5pX9LO9zK0H5mCZSPBKFuBecukFb753g7RyiK7bUm4goCPCevG4GlesOJUGYo82G6RkAacJBGupMHaxNu3LmxfMqmpSZdB4cCNF4YxmMAinTIE2JfNLyEecDe07O0ZIwZefM9izDwmWtEW2knL200=
+      secure: mi7DtCwo5d/OiEBtYN9Ux9jZ0w0haoqk4MEbGZdWGjfrNQ1IJa5qzsA9P2J/TJoOKKArSIw7Eow4pmotJg3gcBofrJ2NwDB4wN7V+8MOIo/6KSd6NrRQdBmWi1hqr5VVhuyogCBcsOaefb1HjxRwoUgFSt179anNOBkBlhVXwsoakftZ/YDTbB3oosX0K4Aj8nGX+rGTRVC0dGgbHc9UinR4E5mnghmLUQjG39Q3TVRKf6MhvDN9/aWeWaKwV7Fh0usLiw9KtfZ0x/eOF+rKekrjW9XwwWbCM2iiOExp9gaWaY0zoGo1d1e4LZaxnW2+ur7CwHWhQVfp7O030w3RQN00k512JI+m78R0IE75gP7/uUzfWnNl9cGKLkPaauboaT06kJiE2wuQP+v3Uo6LYQ5NfjJ2MRgiXcIgwGMDAFhGgCB3cKBRMSt/mcMeBiRtREsFaXTSe4ip+xOmp4y+gMG/hBT5iM7fFXWmIt4gZNKrlYMg9bolMF60kNzVPBdAmAtXSUO/EGY+zdtBpYH3YDe/jiedIl848s+6/KCGuEjPqpHe4k2RBTuv29pUoiQLe2I8EJ4m+o/sZ8WzWgEku7Fg5pXLi3sWb5x0AKh7qzTwWvywiYZ5oe/Bli4bgERiHtASK4PqRB8bZUidrU2/6ZOscBbfkzKUiElFp91oRCw=
     on:
       repo: ovv/isitdown
       branch: master
