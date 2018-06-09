@@ -17,7 +17,7 @@ class BaseHTTPCheck(BaseChecks):
         if "name" not in kwargs:
             kwargs["name"] = f"{self.url.scheme}_check_{self.url.host}"
         if request_kwargs is None:
-            requuest_kwargs = dict()
+            request_kwargs = dict()
 
         super().__init__(**kwargs)
         self.method = method
