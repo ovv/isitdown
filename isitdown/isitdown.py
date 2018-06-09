@@ -22,6 +22,9 @@ class IsItDown(aiohttp.web.Application):
 
     async def _start_checks(self, checks, app):
         for check in checks:
+            if check.name in self.checks:
+                raise RuntimeError(f"Duplicated check name: {check.name}")
+
             self.checks[check.name] = check
             check.start()
 
