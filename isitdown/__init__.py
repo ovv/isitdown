@@ -1,2 +1,2 @@
 from . import checks, notifiers
-from .isitdown import isitdown
+from .isitdown import IsItDown
