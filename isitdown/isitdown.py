@@ -6,7 +6,7 @@ import aiohttp.web
 LOG = logging.getLogger(__name__)
 
 
-class isitdown(aiohttp.web.Application):
+class IsItDown(aiohttp.web.Application):
     def __init__(self, *checks, **kwargs):
         super().__init__(**kwargs)
         if checks is None:

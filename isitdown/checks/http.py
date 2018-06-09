@@ -9,15 +9,20 @@ LOG = logging.getLogger(__name__)
 
 
 class BaseHTTPCheck(BaseChecks):
-    def __init__(self, url, *, method="GET", http_session=None, **kwargs):
+    def __init__(
+        self, url, *, method="GET", http_session=None, request_kwargs=None, **kwargs
+    ):
         self.url = URL(url)
 
         if "name" not in kwargs:
             kwargs["name"] = f"{self.url.scheme}_check_{self.url.host}"
+        if request_kwargs is None:
+            requuest_kwargs = dict()
 
         super().__init__(**kwargs)
         self.method = method
         self.http_session = http_session
+        self.request_kwargs = request_kwargs
 
     async def startup(self):
         await super().startup()
@@ -30,7 +35,9 @@ class BaseHTTPCheck(BaseChecks):
 
     async def check(self):
         await super().check()
-        response = await self.http_session.request(url=self.url, method=self.method)
+        response = await self.http_session.request(
+            url=self.url, method=self.method, **self.request_kwargs
+        )
         return await self.validate_response(response)
 
     async def validate_response(self, response):
@@ -50,7 +57,7 @@ class StatusCodeHTTPCheck(BaseHTTPCheck):
                 check=self.name,
                 success=False,
                 data=response,
-                reason=f"Wrong status code: {rep.status}",
+                reason=f"Wrong status code: {reponse.status}",
             )
 
         return result
