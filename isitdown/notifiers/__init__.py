@@ -15,14 +15,18 @@ class state(Enum):
 
 class BaseNotifier:
     def __init__(self, notify_after=1):
-        self.errors = 0
+        self.errors = dict()
         self.state = state.OK
         self.notify_after = notify_after
 
     async def error(self, result):
+        if result.check not in self.errors:
+            self.errors[result.check] = 0
+
         self.state = state.ERROR
-        self.errors += 1
-        if self.errors % self.notify_after == 0:
+        self.errors[result.check] += 1
+
+        if self.errors[result.check] % self.notify_after == 0:
             await self._error(result)
         else:
             await self._silenced_error(result)
@@ -59,7 +63,7 @@ class LoggingNotifier(BaseNotifier):
     async def _error(self, result):
         self.logger.error(f"Check %(check)s FAILED (%(reason)s)", attr.asdict(result))
 
-    async def ok(self, result):
+    async def _ok(self, result):
         self.logger.info(f"Check %(check)s OK", attr.asdict(result))
 
     async def _recover(self, result):
@@ -126,7 +130,7 @@ class SMTPNotifier(BaseNotifier):
     async def _recover(self, result):
         await self._send_email(subject=f"Check {result.check} RECOVERED !")
 
-    async def ok(self, result):
+    async def _ok(self, result):
         pass
 
     async def _silenced_error(self, result):
