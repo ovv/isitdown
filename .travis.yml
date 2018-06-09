@@ -16,6 +16,7 @@ install:
 - pipenv install --deploy && pipenv install --dev --deploy
 script:
 - pipenv run black --check --diff .
+- pipenv run python setup.py flake8
 - pipenv run python setup.py test
 - pipenv run python setup.py doc
 - pipenv run python setup.py sdist
