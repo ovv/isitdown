@@ -4,7 +4,7 @@ import setuptools
 LONG_DESCRIPTION = pathlib.Path("README.rst").read_text("utf-8")
 
 requires = {
-    "install": ["attrs", "aiohttp", "asyncssh"],
+    "install": ["attrs", "aiohttp", "asyncssh", "aiosmtplib"],
     "setup": ["pytest-runner"],
     "dev": [
         "tox",
