@@ -8,7 +8,7 @@ from email.mime.text import MIMEText
 LOG = logging.getLogger(__name__)
 
 
-class State(Enum):
+class state(Enum):
     OK = 0
     ERROR = 1
 
@@ -16,11 +16,11 @@ class State(Enum):
 class BaseNotifier:
     def __init__(self, notify_after=1):
         self.errors = 0
-        self.state = State.OK
+        self.state = state.OK
         self.notify_after = notify_after
 
     async def error(self, result):
-        self.state = State.ERROR
+        self.state = state.ERROR
         self.errors += 1
         if self.errors % self.notify_after == 0:
             await self._error(result)
@@ -28,8 +28,8 @@ class BaseNotifier:
             await self._silenced_error(result)
 
     async def ok(self, result):
-        if self.state == State.ERROR:
-            self.state = State.OK
+        if self.state == state.ERROR:
+            self.state = state.OK
             await self._recover(result)
         else:
             await self._ok(result)
