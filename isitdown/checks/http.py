@@ -57,7 +57,7 @@ class StatusCodeHTTPCheck(BaseHTTPCheck):
                 check=self.name,
                 success=False,
                 data=response,
-                reason=f"Wrong status code: {reponse.status}",
+                reason=f"Wrong status code: {response.status}",
             )
 
         return result
