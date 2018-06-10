@@ -107,7 +107,7 @@ class SMTPNotifier(BaseNotifier):
         self.recipients = recipients
         self.smtp_kwargs = smtp_kwargs
 
-    async def _send_email(self, subject, payload):
+    async def _send_email(self, subject, payload=''):
 
         client = aiosmtplib.SMTP(**self.smtp_kwargs)
         await client.connect()
