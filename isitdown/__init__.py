@@ -1,2 +1,2 @@
-from . import checks, notifiers
-from .isitdown import IsItDown
+from . import checks, notifiers  # noqa: F401
+from .isitdown import IsItDown  # noqa: F401
