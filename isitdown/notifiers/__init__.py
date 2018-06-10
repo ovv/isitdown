@@ -34,7 +34,7 @@ class BaseNotifier:
             await self._silenced_error(result)
 
     async def ok(self, result):
-            if result.check not in self.states:
+        if result.check not in self.states:
             self.states[result.check] = state.OK
 
         if self.states[result.check] == state.ERROR:
