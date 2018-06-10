@@ -16,15 +16,17 @@ class state(Enum):
 class BaseNotifier:
     def __init__(self, notify_after=1):
         self.errors = dict()
-        self.state = state.OK
+        self.states = dict()
         self.notify_after = notify_after
 
     async def error(self, result):
         if result.check not in self.errors:
             self.errors[result.check] = 0
+        if result.check not in self.states:
+            self.states[result.check] = state.OK
 
-        self.state = state.ERROR
         self.errors[result.check] += 1
+        self.states[result.check] = state.ERROR
 
         if self.errors[result.check] % self.notify_after == 0:
             await self._error(result)
@@ -32,8 +34,11 @@ class BaseNotifier:
             await self._silenced_error(result)
 
     async def ok(self, result):
-        if self.state == state.ERROR:
-            self.state = state.OK
+            if result.check not in self.states:
+            self.states[result.check] = state.OK
+
+        if self.states[result.check] == state.ERROR:
+            self.state[result.check] = state.OK
             await self._recover(result)
         else:
             await self._ok(result)
