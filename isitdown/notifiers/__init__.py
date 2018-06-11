@@ -14,7 +14,10 @@ class state(Enum):
 
 
 class BaseNotifier:
-    def __init__(self, notify_after=1):
+    def __init__(self, notify_after=None):
+        if notify_after is None:
+            notify_after = (1,)
+
         self.errors = dict()
         self.states = dict()
         self.notify_after = notify_after
@@ -27,13 +30,11 @@ class BaseNotifier:
 
         self.errors[result.check] += 1
         self.states[result.check] = state.ERROR
-
-        if self.errors[result.check] % self.notify_after == 0:
-            await self._error(result)
-        else:
-            await self._silenced_error(result)
+        await self._dispatch_error(result)
 
     async def ok(self, result):
+        if result.check not in self.errors:
+            self.errors[result.check] = 0
         if result.check not in self.states:
             self.states[result.check] = state.OK
 
@@ -43,6 +44,20 @@ class BaseNotifier:
             await self._recover(result)
         else:
             await self._ok(result)
+
+    async def _dispatch_error(self, result):
+
+        # Check if the error count is one where we should notify
+        if self.errors[result.check] in self.notify_after:
+            await self._error(result)
+            return
+
+        # We notify if the error count is a multiple of the last notify_after value
+        # This provide a backoff mechanisms
+        if self.errors[result.check] % self.notify_after[-1] == 0:
+            await self._error(result)
+        else:
+            await self._silenced_error(result)
 
     async def _error(self, result):
         raise NotImplementedError()
