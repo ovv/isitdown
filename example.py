@@ -5,6 +5,9 @@ logging.basicConfig(level=logging.INFO)
 
 
 def main():
+
+    logging_notifier = isitdown.notifiers.LoggingNotifier(notify_after=(1, 3, 5))
+
     checks = [
         isitdown.checks.StatusCodeHTTPCheck(
             url="https://github.com", startup_delay=10, check_interval=20
@@ -14,6 +17,10 @@ def main():
             host="foo.bar",
             username="root",
             expected_regex="active \(running\)",
+        ),
+        # Failure example with backoff
+        isitdown.checks.StatusCodeHTTPCheck(
+            url="https://foo.bar", check_interval=2, notifiers=(logging_notifier,)
         ),
     ]
 
