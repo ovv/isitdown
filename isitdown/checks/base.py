@@ -1,10 +1,12 @@
 import attr
 import logging
 import asyncio
+import datetime
 
 from enum import Enum
 
 from ..notifiers import LoggingNotifier
+from ..storage import MemoryStorage
 
 LOG = logging.getLogger(__name__)
 
@@ -15,6 +17,8 @@ class Result:
     success = attr.ib()
     data = attr.ib()
     reason = attr.ib(default="")
+    end_time = attr.ib(default=attr.Factory(datetime.datetime.now))
+    start_time = attr.ib(default=None)
 
 
 class state(Enum):
@@ -24,16 +28,27 @@ class state(Enum):
 
 
 class BaseChecks:
-    def __init__(self, name, *, startup_delay=0, check_interval=300, notifiers=None):
+    def __init__(
+        self,
+        name,
+        *,
+        startup_delay=0,
+        check_interval=300,
+        notifiers=None,
+        storage=None,
+    ):
 
         if not notifiers:
-            notifiers = [
-                LoggingNotifier(logger=logging.getLogger(f"isitdown.status.{name}"))
-            ]
+            notifiers = (
+                LoggingNotifier(logger=logging.getLogger(f"isitdown.status.{name}")),
+            )
+        if not storage:
+            storage = MemoryStorage()
 
         self.name = name
         self._task = None
         self.state = state.RUNNING
+        self.storage = storage
         self.notifiers = notifiers
         self.startup_delay = startup_delay
         self.paused_seconds = 0
@@ -54,7 +69,6 @@ class BaseChecks:
                     await self._pause()
                 else:
                     await self._run()
-                    await asyncio.sleep(self.check_interval)
         except asyncio.CancelledError:
             pass
         except Exception as e:
@@ -63,6 +77,7 @@ class BaseChecks:
             await self.shutdown()
 
     async def _run(self):
+        start_time = datetime.datetime.now()
         try:
             result = await self.check()
         except Exception as e:
@@ -71,10 +86,18 @@ class BaseChecks:
                 check=self.name, success=False, reason=f"python exception: {e}", data=e
             )
         finally:
-            if result.success:
-                await self.ok(result=result)
-            else:
-                await self.error(result=result)
+            result.start_time = start_time
+            await asyncio.gather(
+                *self._notify(result),
+                self.storage.save(result),
+                asyncio.sleep(self.check_interval),
+            )
+
+    def _notify(self, result):
+        if result.success:
+            return [notifier.ok(result) for notifier in self.notifiers]
+        else:
+            return [notifier.error(result) for notifier in self.notifiers]
 
     async def _pause(self):
         if self.paused_seconds <= 0:
@@ -92,7 +115,7 @@ class BaseChecks:
         await self._task
 
     async def check(self):
-        LOG.debug(f"Checking with check: {self.name}")
+        raise NotImplementedError("No check implemented")
 
     async def startup(self):
         pass
@@ -100,9 +123,3 @@ class BaseChecks:
     async def shutdown(self):
         LOG.info(f"Shutting down check: {self.name}")
         self.running = state.STOPPED
-
-    async def error(self, result):
-        await asyncio.gather(*[notifier.error(result) for notifier in self.notifiers])
-
-    async def ok(self, result):
-        await asyncio.gather(*[notifier.ok(result) for notifier in self.notifiers])

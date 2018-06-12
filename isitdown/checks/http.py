@@ -34,7 +34,7 @@ class BaseHTTPCheck(BaseChecks):
         await self.http_session.close()
 
     async def check(self):
-        await super().check()
+        LOG.debug(f"Starting check: {self.name}")
         response = await self.http_session.request(
             url=self.url, method=self.method, **self.request_kwargs
         )
@@ -50,6 +50,8 @@ class StatusCodeHTTPCheck(BaseHTTPCheck):
         self.expected_status_code = expected_status_code
 
     async def validate_response(self, response):
+        previous_check = await self.storage.fetch(self.name)
+        print(previous_check)
         if response.status == self.expected_status_code:
             result = Result(check=self.name, success=True, data=response)
         else:

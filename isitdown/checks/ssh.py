@@ -39,8 +39,7 @@ class BaseSSHCommandCheck(BaseChecks):
         self.ssh_kwargs = ssh_kwargs
 
     async def check(self):
-        await super().check()
-
+        LOG.debug(f"Starting check: {self.name}")
         async with asyncssh.connect(**self.ssh_kwargs) as connection:
             response = await connection.run(self.command)
 
