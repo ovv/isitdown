@@ -8,7 +8,6 @@ aiohttp = "*"
 attrs = "*"
 asyncssh = {extras = ["bcrypt"]}
 aiosmtplib = "*"
-idna = "<2.7"
 
 [dev-packages]
 black = "*"
