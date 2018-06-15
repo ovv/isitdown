@@ -39,7 +39,7 @@ class BaseNotifier:
             self.states[result.check] = state.OK
 
         if self.states[result.check] == state.ERROR:
-            self.state[result.check] = state.OK
+            self.states[result.check] = state.OK
             self.errors[result.check] = 0
             await self._recover(result)
         else:
