@@ -33,7 +33,11 @@ class BaseNotifier:
         try:
             await self._dispatch_error(result)
         except Exception:
-            LOG.exception('Error while notifying: %s, state: %s', result.check, self.states[result.check])
+            LOG.exception(
+                "Error while notifying: %s, state: %s",
+                result.check,
+                self.states[result.check],
+            )
 
     async def ok(self, result):
         if result.check not in self.errors:
@@ -47,12 +51,20 @@ class BaseNotifier:
             try:
                 await self._recover(result)
             except Exception:
-                LOG.exception('Error while notifying: %s, state: %s', result.check, self.states[result.check])
+                LOG.exception(
+                    "Error while notifying: %s, state: %s",
+                    result.check,
+                    self.states[result.check],
+                )
         else:
             try:
                 await self._ok(result)
             except Exception as e:
-                LOG.exception('Error while notifying: %s, state: %s', result.check, self.states[result.check])
+                LOG.exception(
+                    "Error while notifying: %s, state: %s",
+                    result.check,
+                    self.states[result.check],
+                )
 
     async def _dispatch_error(self, result):
 
