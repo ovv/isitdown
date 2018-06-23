@@ -27,69 +27,59 @@ class BaseNotifier:
         if notify_after is None:
             notify_after = (1,)
 
-        self.check_states = dict()
+        self.states = dict()
         self.notify_after = notify_after
 
+    def find_check_state(self, check):
+        if check not in self.states:
+            self.states[check] = CheckState(name=check)
+
+        return self.states[check]
+
     async def error(self, result):
-        if result.check not in self.check_states:
-            self.check_states[result.check] = CheckState(name=result.check)
 
-        check_state = self.check_states[result.check]
+        check_state = self.find_check_state(result.check)
         check_state.state = state.ERROR
+        check_state.errors += 1
 
-        try:
-            await self._dispatch_error(check_state, result)
-        except Exception:
-            LOG.exception("Error while notifying: %s, state: ERROR", result.check)
+        if check_state.errors in self.notify_after:
+            # Check if the error count is one where we should notify
+            check_state.notified = True
+            try:
+                await self._error(result)
+            except Exception as e:
+                LOG.exception("Failed to notify result: %s", result)
+        elif check_state.errors % self.notify_after[-1] == 0:
+            # We notify if the error count is a multiple of the last notify_after value
+            # This provide a backoff mechanisms
+            check_state.notified = True
+            try:
+                await self._error(result)
+            except Exception as e:
+                LOG.exception("Failed to notify result: %s", result)
+        else:
+            try:
+                await self._silenced_error(result)
+            except Exception as e:
+                LOG.exception("Failed to notify result: %s", result)
 
     async def ok(self, result):
-        if result.check not in self.check_states:
-            self.check_states[result.check] = CheckState(name=result.check)
-
-        check_state = self.check_states[result.check]
+        check_state = self.find_check_state(result.check)
 
         if check_state.state == state.ERROR and check_state.notified:
-            check_state.errors = 0
-            check_state.state = state.OK
-            check_state.notified = False
-
             try:
                 await self._recover(result)
             except Exception:
-                LOG.exception(
-                    "Error while notifying: %s, state: %s",
-                    result.check,
-                    self.states[result.check],
-                )
+                LOG.exception("Failed to notify result: %s", result)
         else:
-            check_state.errors = 0
-            check_state.state = state.OK
-            check_state.notified = False
-
             try:
                 await self._ok(result)
             except Exception as e:
-                LOG.exception(
-                    "Error while notifying: %s, state: %s",
-                    result.check,
-                    self.states[result.check],
-                )
+                LOG.exception("Failed to notify result: %s", result)
 
-    async def _dispatch_error(self, check_state, result):
-
-        # Check if the error count is one where we should notify
-        if check_state.errors in self.notify_after:
-            check_state.notified = True
-            await self._error(result)
-            return
-
-        # We notify if the error count is a multiple of the last notify_after value
-        # This provide a backoff mechanisms
-        if check_state.errors % self.notify_after[-1] == 0:
-            check_state.notified = True
-            await self._error(result)
-        else:
-            await self._silenced_error(result)
+        check_state.errors = 0
+        check_state.state = state.OK
+        check_state.notified = False
 
     async def _error(self, result):
         raise NotImplementedError()
