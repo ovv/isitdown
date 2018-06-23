@@ -19,7 +19,7 @@ class CheckState:
     name = attr.ib()
     state = attr.ib(default=state.OK, validator=attr.validators.in_(state))
     errors = attr.ib(default=0)
-    notified = attr.ib(validator=bool, default=False)
+    notified = attr.ib(validator=attr.validators.instance_of(bool), default=False)
 
 
 class BaseNotifier:
